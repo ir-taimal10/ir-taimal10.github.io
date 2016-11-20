@@ -1,17 +1,809 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>helloworld</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
+<html><head>
+    <meta charset="UTF-8">
+    <title>PSE - Pago con Registro Persona Natural</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name="description" content="helloworld project">
-    <meta name="keywords" content="helloworld, helloworld">
-    <link rel="icon" href="./WebContent/app/commons/img/favicon.ico" type="image/x-icon">
-  </head>
-  <body>
-    <div ng-view=""></div>
-  </body>
-  <script src="./WebContent/app/dist/helloworld.app.9695465fc901e63f1850.js"></script>
-</html>
+    <link type="text/css" href="css/font_google.css" rel="stylesheet">
+    <link type="text/css" href="css/reset.min.css" rel="stylesheet">
+    <link type="text/css" href="css/bootstrap.css" rel="stylesheet">
+    <link type="text/css" href="css/formValidation.min.css" rel="stylesheet">
+    <link type="text/css" href="css/font-awesome.min.css" rel="stylesheet">
+    <link type="text/css" href="css/pse.css" rel="stylesheet">
+    <link type="text/css" href="css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <!-- JS -->
+    <!--[if lte IE 8]>
+    <link href="css/iestyle.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/jquery.1.9.min.js"></script>
+    <![endif]-->
+    <script async="" src="//www.google-analytics.com/analytics.js"></script><script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/migrate.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/FormValidation/formValidation.min.js"></script>
+    <script type="text/javascript" src="js/FormValidation/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/FormValidation/es_CL.js"></script>
+    <script type="text/javascript" src="js/bowser.min.js"></script>
+    <script type="text/javascript" src="js/json3.min.js"></script>
+    <script type="text/javascript" src="js/V2/PSE.js"></script>
+    <script type="text/javascript" src="js/jquery.bootstrap.wizard.min.js"></script>
+    <script type="text/javascript" src="js/prettify.js"></script>
+    <script type="text/javascript" src="js/respond.js"></script>
+    <script type="text/javascript" src="//www.google-analytics.com/analytics.js"></script>
+    <script type="text/javascript">
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-37284652-8', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script type="text/javascript" src="js/fingerprint.min.js"></script>
+    <script type="text/javascript">
+        var prefs;
+        var userdata;
+        var userquestionanswer;
+        var policytype;
+
+        function startForm() {
+
+            if (qs("enc") == null) {
+                $("#all").hide();
+                alert('La página web solicitada no se encuentra disponible, ingresa nuevamente desde el inicio.');
+                return;
+            }
+
+            $(window).load(function () {
+                startFingerprint();
+            });
+
+            $("#divIncorrectAnswers").hide();
+            $("#trRegistradoPN").hide();
+            $("#trRegistradoPJ1").hide();
+            $("#trRegistradoPJ2").hide();
+            $("#trRegistrar").hide();
+            $("#trValidation").hide();
+
+            $("#rdUsertype0").click(function () { onChangePerson(); });
+            $("#rdUsertype1").click(function () { onChangePerson(); });
+            $("#rdOptionYes").click(function () { onChangeOption(); });
+            $("#rdOptionNo").click(function () { onChangeOption(); });
+            $("#rdOptionNow").click(function () { onChangeOption(); });
+
+
+            $.ajax({
+                url: "api/GetPreferences",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'page': 'transaction', 'enc': qs("enc") }),
+                dataType: "json",
+                success: onGetPreferencesSuccess,
+                error: onGetPreferencesError,
+                async: false
+            });
+        }
+
+        function onGetPreferencesSuccess(data) {
+            if (data != null) {
+                prefs = JSON.parse(data);
+                showPreferences();
+            }
+            else
+                alert("Ocurrió un error obteniendo los datos para mostrar la página, inténtalo nuevamente.");
+        }
+
+        function onGetPreferencesError(error) {
+            alert('Ocurrió un error obteniendo los datos para mostrar la página, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+        }
+
+        function showPreferences() {
+            setupPersonalization(prefs, [["PNEMail", "TOOLTIP_PNEMAIL"], ["PJNIT", "TOOLTIP_PJNIT"], ["PJEMail", "TOOLTIP_PJEMAIL"], ["PJEMail", "TOOLTIP_PJEMAIL"], ["QuestionResponse", "TOOLTIP_QUESTION"], ["ddTipoIdentificacion", "TOOLTIP_CAMPO_TIPOIDENTIFICACION"], ["txtNumeroIdentificacion", "TOOLTIP_CAMPO_NUMEROIDENTIFICACION"], ["txtNITPJ", "TOOLTIP_CAMPO_NUMEROIDENTIFICACION_PJ"], ["txtNombre", "TOOLTIP_CAMPO_NOMBRE_PN"], ["txtNombrePJ", "TOOLTIP_CAMPO_NOMBRE_PJ"], ["txtEMail", "TOOLTIP_CAMPO_EMAIL"], ["txtNumeroCelular", "TOOLTIP_CAMPO_TELEFONO_CELULAR"], ["txtDireccionPN", "TOOLTIP_CAMPO_DIRECCION"], ["txtDireccionPJ", "TOOLTIP_CAMPO_DIRECCION"], ["chkDisclaimerDiv", "TOOLTIP_CAMPO_DISCLAIMERTERMINOS"], ["chkDisclaimerInModal", "TOOLTIP_CAMPO_DISCLAIMERTERMINOS"]]);
+            $('[data-toggle="tooltip"]').tooltip();
+
+            if (prefs.UserType == "0") {
+                $("#rdUsertype0").prop("checked", true);
+                document.title = "PSE - Pago con Registro Persona Natural";
+                $("#lblPersonType").html("Persona Natural");
+                $("#trRegistradoPN").show("slow");
+            }
+            else {
+                $("#rdUsertype1").prop("checked", true);
+                document.title = "PSE - Pago con Registro Persona Jurídica";
+                $("#lblPersonType").html("Persona Jurídica");
+                $("#trRegistradoPJ1").show("slow");
+                $("#trRegistradoPJ2").show("slow");
+            }
+
+            if (!prefs.EnableNoRegister) {
+                $("#rdOptionNo").hide();
+                $('#spnOptionNo').hide();
+            }
+
+            $("#rdOptionYes").prop("checked", true);
+        }
+
+        function onChangePerson() {
+            if ($("#rdUsertype0").is(":checked"))
+                $("#lblPersonType").html("Persona Natural");
+            else
+                $("#lblPersonType").html("Persona Jurídica");
+            onChangeOption();
+        }
+
+        function getPersonType() {
+            if ($("#rdUsertype0").is(":checked"))
+                return "0";
+            else
+                return "1";
+        }
+
+        function getOption() {
+            if ($("#rdOptionYes").is(":checked"))
+                return "Yes";
+            else if ($("#rdOptionNo").is(":checked"))
+                return "No";
+            else
+                return "Now";
+        }
+
+        function getEMail() {
+            if ($("#rdUsertype0").is(":checked"))
+                return $("#PNEMail").val();
+            else
+                return $("#PJEMail").val();
+        }
+
+        function onChangeOption() {
+            if ($("#rdOptionYes").is(":checked")) {
+
+                $('#form1').attr("class", "form-horizontal");
+                if ($("#rdUsertype0").is(":checked")) {
+                    document.title = "PSE - Pago con Registro Persona Natural";
+                    $("#trRegistradoPN").show("slow");
+                    $("#trRegistradoPJ1").hide();
+                    $("#trRegistradoPJ2").hide();
+                }
+                else {
+                    document.title = "PSE - Pago con Registro Persona Jurídica";
+                    $("#trRegistradoPJ1").show("slow");
+                    $("#trRegistradoPJ2").show("slow");
+                    $("#trRegistradoPN").hide();
+                }
+                $("#trRegistrar").hide();
+                $("#trValidation").hide();
+            }
+            else if ($("#rdOptionNo").is(":checked")) {
+                $('#form1').removeAttr("class");
+
+                $("#trRegistradoPN").hide();
+                $("#trRegistradoPJ1").hide();
+                $("#trRegistradoPJ2").hide();
+                $("#trRegistrar").show("slow");
+                $("#trValidation").hide();
+
+                if ($("#rdUsertype0").is(":checked")) {
+                    document.title = "PSE - Pago sin Registro Persona Natural";
+                    $('#ddTipoIdentificacion').empty();
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 11, text: 'Registro civil de nacimiento' }));
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 12, text: 'Tarjeta de identidad' }));
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 13, text: 'Cedula de ciudadania' }));
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 21, text: 'Tarjeta de extranjeria' }));
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 22, text: 'Cedula de extranjeria' }));
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 41, text: 'Pasaporte' }));
+                    $('#ddTipoIdentificacion').append($('<option>', { value: 42, text: 'Documento de identificacion extranjero' }));
+                    $('#ddTipoIdentificacion').prop("disabled", false);
+                    $('#ddTipoIdentificacion').val("13");
+                    $("#trRegistrarPN").show();
+                    $("#trRegistrarNamePN").show();
+                    $("#trRegistrarPJ").hide();
+                    $("#txtDireccionPN").show();
+                    $("#txtDireccionPJ").hide();
+                }
+                else {
+                    document.title = "PSE - Pago sin Registro Persona Jurídica";
+                    $("#trRegistrarPN").hide();
+                    $("#trRegistrarNamePN").hide();
+                    $("#trRegistrarPJ").show();
+                    $("#txtDireccionPN").hide();
+                    $("#txtDireccionPJ").show();
+                }
+            }
+            else {
+                window.location.href = "CreateRegister.htm?enc=" + qs("enc") + "&Mode=Volver&TipoPersona=" + getPersonType();
+            }
+        }
+
+        function loadRegisterAndChooseQuestion() {
+            $.ajax({
+                url: "api/LoadRegisterAndChooseQuestion",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'enc': qs("enc"), 'personType': getPersonType(), 'email': getEMail(), 'NIT': $("#PJNIT").val(), 'InPayment': 'true' }),
+                dataType: "json",
+                success: loadRegisterAndChooseQuestionSuccess,
+                error: loadRegisterAndChooseQuestionError,
+                async: false
+            });
+        }
+
+        function loadRegisterAndChooseQuestionSuccess(data) {
+            if (data != null) {
+                userdata = JSON.parse(data);
+            }
+            else
+                alert("Ocurrió un error cargando el usuario para pago, inténtalo nuevamente.");
+        }
+
+        function loadRegisterAndChooseQuestionError(error) {
+            alert('Ocurrió un error cargando el usuario para pago, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+        }
+
+        function validateQuestion() {
+            $.ajax({
+                url: "api/ValidateQuestion",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'rdPersona': getPersonType(), 'answer': $("#QuestionResponse").val() }),
+                dataType: "json",
+                success: validateQuestionSuccess,
+                error: validateQuestionError,
+                async: false
+            });
+        }
+
+        function validateQuestionSuccess(data) {
+            if (data != null) {
+                userquestionanswer = JSON.parse(data);
+            }
+            else
+                alert("Ocurrió un error validando la pregunta de seguridad del usuario, inténtalo nuevamente.");
+        }
+
+        function validateQuestionError(error) {
+            alert('Ocurrió un error validando la pregunta de seguridad del usuario, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+        }
+
+        function loadUserPolicy(type) {
+            policytype = type;
+            $.ajax({
+                url: "api/LoadUserPolicy",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'type': type }),
+                dataType: "json",
+                success: loadUserPolicySuccess,
+                error: loadUserPolicyError
+            });
+        }
+
+        function loadUserPolicySuccess(data) {
+            if (data != null) {
+                $("#currentUserPolicy").html(data);
+                if (policytype == "Registered")
+                    $("#chkDisclaimerInModal").show();
+                else
+                    $("#chkDisclaimerInModal").hide();
+                $('#disclaimerModal').modal('show');
+            }
+            else
+                alert("Ocurrió un error cargando la política de usuarios, inténtalo nuevamente.");
+        }
+
+        function loadUserPolicyError(error) {
+            alert('Ocurrió un error cargando la política de usuarios, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+        }
+
+        function acceptUserPolicy() {
+            $.ajax({
+                url: "api/AcceptUserPolicy",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: "",
+                dataType: "json",
+                success: acceptUserPolicySuccess,
+                error: acceptUserPolicyError,
+                async: false
+            });
+        }
+
+        function acceptUserPolicySuccess(data) {
+            if (data != true)
+                alert("Ocurrió un error aceptando la nueva política de usuarios, inténtalo nuevamente.");
+        }
+
+        function acceptUserPolicyError(error) {
+            alert('Ocurrió un error aceptando la nueva política de usuarios, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+        }
+
+        function redirectToBank() {
+            var seconds = getFingerprintElapsedSeconds();
+            if ((finger == null || finger.length == 0) && seconds < 10) {
+                alert('Por favor aguarde más ' + Math.ceil(10 - seconds).toString() + ' segundo para seguir con la transacción');
+                return;
+            }
+            $("#divProcessing").show();
+            $("#btnSeguir").prop("disabled", true);
+            $.ajax({
+                url: "api/RedirectToBank",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'enc': qs("enc"), 'Fingerprint': getFinger(), 'rdPersona': getPersonType(), 'rdOption': getOption(), 'EMail': getEMail(), 'NIT': $("#PJNIT").val(), 'Answer': $("#QuestionResponse").val(), 'txtNombre': getName(), 'ddTipoIdentificacion': getIdType(), 'txtNumeroIdentificacion': getId(), 'txtDireccion': getAddress(), 'txtNumeroCelular': $("#txtNumeroCelular").val(), 'txtEMail': $("#txtEMail").val() }),
+                dataType: "json",
+                success: redirectToBankSuccess,
+                error: redirectToBankError
+            });
+        }
+
+        function getFinger() {
+            if (finger != null)
+                return finger;
+            else
+                return '';
+        }
+
+        function getName() {
+            if (getPersonType() == "0")
+                return $("#txtNombre").val();
+            else
+                return $("#txtNombrePJ").val();
+        }
+
+        function getIdType() {
+            if (getPersonType() == "0")
+                return $("#ddTipoIdentificacion").val();
+            else
+                return "31";
+        }
+
+        function getId() {
+            if (getPersonType() == "0")
+                return $("#txtNumeroIdentificacion").val();
+            else
+                return $("#txtNITPJ").val();
+        }
+
+        function getAddress() {
+            if (getPersonType() == "0")
+                return $("#txtDireccionPN").val();
+            else
+                return $("#txtDireccionPJ").val();
+        }
+
+        function redirectToBankSuccess(data) {
+            try {
+                if (data != null) {
+                    var resp = JSON.parse(data);
+                    if (resp.Success)
+                        window.location.href = resp.URL;
+                    else {
+                        if (resp.Reload)
+                            window.location.href = window.location.href;
+                        else
+                            alert(resp.ErrorMessage);
+                    }
+                }
+                else
+                    alert("Ocurrió un error seguindo con la transacción, inténtalo nuevamente.");
+            }
+            finally {
+                $("#divProcessing").hide();
+                $("#btnSeguir").prop("disabled", false);
+            }
+        }
+
+        function redirectToBankError(error) {
+            try {
+                alert('Ocurrió un error seguindo con la transacción, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+            }
+            finally {
+                $("#divProcessing").hide();
+                $("#btnSeguir").prop("disabled", false);
+            }
+        }
+
+        function processStep() {
+            $('#form1').data('formValidation').validate();
+            if ($('#form1').data('formValidation').isValid()) {
+                if ($("#rdOptionYes").is(":checked")) {
+
+                    if (!$("#trValidation").is(':visible') && ((getPersonType() == "0" && prefs.USERREGISTERUSEQUESTIONSPN) || (getPersonType() == "1" && prefs.USERREGISTERUSEQUESTIONSPJ))) {
+                        loadRegisterAndChooseQuestion();
+                        if (userdata.Success) {
+                            if (userdata.Question != null) {
+                                $("#lblQuestion").html(userdata.Question);
+                                $("#trValidation").show("slow");
+                            }
+                        }
+                        else {
+                            if (userdata.ErrorMessage.length > 0)
+                                alert(userdata.ErrorMessage);
+                            else
+                                window.location.href = userdata.URL;
+                        }
+                        return;
+                    }
+
+                    if ($("#trValidation").is(':visible') || (getPersonType() == "0" && !prefs.USERREGISTERUSEQUESTIONSPN) || (getPersonType() == "1" && !prefs.USERREGISTERUSEQUESTIONSPJ)) {
+                        loadRegisterAndChooseQuestion();
+                        if (userdata.Success) {
+                            if ((getPersonType() == "0" && prefs.USERREGISTERUSEQUESTIONSPN) || (getPersonType() == "1" && prefs.USERREGISTERUSEQUESTIONSPJ)) {
+                                validateQuestion();
+                            }
+                            else {
+                                userquestionanswer = new Object();
+                                userquestionanswer.Success = true;
+                                userquestionanswer.EnableWithoutRegister = false;
+                            }
+
+                            if (userquestionanswer.EnableWithoutRegister && prefs.EnableNoRegister) {
+                                $("#rdOptionNo").prop('checked', true);
+                                $("#rdOptionYes").prop("disabled", true);
+                                onChangeOption();
+                                $("#lblIncorrectAnswersExceded").html(userquestionanswer.ErrorMessage);
+                                $("#divIncorrectAnswers").show("slow");
+                            }
+
+                            if (userquestionanswer.Success) {
+                                if (!userdata.UserPolicyMustBeAcepted || $("#chkDisclaimer").is(":checked")) {
+                                    if (userdata.UserPolicyMustBeAcepted)
+                                        acceptUserPolicy();
+                                    redirectToBank();
+                                }
+                                else {
+                                    loadUserPolicy("Registered");
+                                }
+                            }
+                            else {
+                                $("#lblQuestion").html(userquestionanswer.Question);
+                                alert(userquestionanswer.ErrorMessage);
+                            }
+                        }
+                        else {
+                            if (userdata.ErrorMessage.length > 0)
+                                alert(userdata.ErrorMessage);
+                            else
+                                window.location.href = userdata.URL;
+                        }
+                    }
+                }
+                else {
+                    redirectToBank();
+                }
+            }
+        }
+
+        function abandonPayment() {
+            $("#divProcessing").show();
+            $("#btnCancel").prop("disabled", true);
+            $.ajax({
+                url: "api/AbandonPayment",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ 'enc': qs("enc") }),
+                dataType: "json",
+                success: onAbandonPaymentSuccess,
+                error: onAbandonPaymentError
+            });
+        }
+
+        function onAbandonPaymentSuccess(data) {
+            try {
+                if (data != null) {
+                    var abd = JSON.parse(data);
+                    if (abd.Success) {
+                        window.location.href = abd.URL;
+                    }
+                    else
+                        alert(abd.ErrorMessage);
+                }
+                else
+                    alert("Ocurrió un error abandonando el pago, inténtalo nuevamente.");
+            }
+            finally {
+                $("#divProcessing").hide();
+                $("#btnCancel").prop("disabled", false);
+            }
+        }
+
+        function onAbandonPaymentError(error) {
+            try {
+                alert('Ocurrió un error abandonando el pago, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+            }
+            finally {
+                $("#divProcessing").hide();
+                $("#btnCancel").prop("disabled", false);
+            }
+        }
+
+        $(document).ready(function () {
+            $('#form1').formValidation();
+            startForm();
+        });
+    </script>
+</head>
+<body onload="checkBrowser();">
+<form id="form1" role="form" class="form-horizontal fv-form fv-form-bootstrap" data-fv-framework="bootstrap" onsubmit="return false;" novalidate="novalidate"><button type="submit" class="fv-hidden-submit" style="display: none; width: 0px; height: 0px;"></button>
+    <div id="header">
+        <div class="main">
+            <div class="container nopadding">
+                <div class="logo-pse col-xs-12 nopadding">
+                    <img src="assets/logo-pse.png" alt="PSE - Pagos Seguros en Línea" title="PSE - Pagos Seguros en Línea">
+                    <p>
+                        Fácil, rápido y seguro</p>
+                </div>
+            </div>
+        </div>
+        <div class="top">
+            <p>
+                <i class="fa fa-question-circle"></i><a onclick="FullScreenWindow('FAQ.html','FAQ');" href="#">¿Preguntas frecuentes?</a></p>
+        </div>
+    </div>
+    <div class="content container">
+        <div id="all" class="jumbotron">
+            <h2 class="title text-center">
+                PSE - Pagos Seguros en Línea / <span id="lblPersonType">Persona Natural</span>
+            </h2>
+            <div class="col-xs-12 col-md-10 col-centered box-content">
+                <div class="list-person">
+                    <div class="col-xs-12 col-sm-6 col-sm-offset-3 nopadding">
+                        <div class="col-xs-6 left nopadding">
+                            <label>
+                                <input type="radio" id="rdUsertype0" name="person_option">
+                                <span>
+                                    <img src="assets/icon-user.png"></span>
+                                <p>
+                                    Persona natural</p>
+                            </label>
+                        </div>
+                        <div class="col-xs-6 right nopadding">
+                            <label>
+                                <input type="radio" id="rdUsertype1" name="person_option">
+                                <span><i class="fa fa-building-o"></i></span>
+                                <p>
+                                    Persona juridica</p>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear">
+                </div>
+                <div class="list-option">
+                    <label>
+                        <input type="radio" id="rdOptionYes" name="action_person">
+                        <span><i class="fa fa-check-circle-o"></i>Soy un usuario registrado</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="rdOptionNow" name="action_person">
+                        <span><i class="fa fa-user-plus"></i>Quiero registrarme ahora</span>
+                    </label>
+                    <label>
+                        <input type="radio" id="rdOptionNo" name="action_person" style="display: none;">
+                        <span id="spnOptionNo" style="display: none;"><i class="fa fa-user-times"></i>Pago con registro preliminar</span>
+                    </label>
+                </div>
+                <div class="clear">
+                </div>
+                <h5 class="text-center" id="divIncorrectAnswers" style="display: none;">
+                    <span id="lblIncorrectAnswersExceded" style="color: Red"></span>
+                </h5>
+                <div id="registrado" class="form-field-box">
+                    <div class="form-group block" id="trRegistradoPN" style="display: block;">
+                        <label class="col-xs-12 col-sm-4">
+                            E-mail</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <input type="text" class="form-control" id="PNEMail" name="PNEMail" placeholder="E-mail registrado en PSE" maxlength="120" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo e-mail es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^[^@\s]+@([^@\s]+\.)+[^@\s]+$" data-fv-regexp-message="El campo e-mail es inválido" data-fv-stringlength-max="120" data-fv-stringlength-message="El campo e-mail debe tener hasta 120 caracteres" data-fv-field="PNEMail" title="" data-original-title="Ingresa el correo electrónico asociado a tu registro">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="PNEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="PNEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail es inválido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="PNEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail debe tener hasta 120 caracteres</small></div>
+                    </div>
+                    <div class="form-group block" id="trRegistradoPJ1" style="display: none;">
+                        <label class="col-xs-12 col-sm-4">
+                            NIT</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <input type="text" class="form-control" id="PJNIT" name="PJNIT" placeholder="NIT registrado en PSE" data-toggle="tooltip" data-placement="top" maxlength="15" data-fv-notempty="true" data-fv-notempty-message="El campo NIT es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^[a-zA-Z0-9]{1,15}$" data-fv-regexp-message="El NIT debe ser alfanumérico de 1 hasta 15 caracteres" data-fv-field="PJNIT" title="" data-original-title="Ingresa el NIT asociado a tu registro">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="PJNIT" data-fv-result="NOT_VALIDATED" style="display: none;">El campo NIT es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="PJNIT" data-fv-result="NOT_VALIDATED" style="display: none;">El NIT debe ser alfanumérico de 1 hasta 15 caracteres</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="PJNIT" data-fv-result="NOT_VALIDATED" style="display: none;">Please enter a value with valid length</small></div>
+                    </div>
+                    <div class="form-group block" id="trRegistradoPJ2" style="display: none;">
+                        <label class="col-xs-12 col-sm-4">
+                            E-mail</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <input type="text" class="form-control" id="PJEMail" name="PJEMail" placeholder="E-mail registrado en PSE" maxlength="120" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo e-mail es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^[^@\s]+@([^@\s]+\.)+[^@\s]+$" data-fv-regexp-message="El campo e-mail es inválido" data-fv-field="PJEMail" title="" data-original-title="Ingresa el correo electrónico asociado a tu registro">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="PJEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="PJEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail es inválido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="PJEMail" data-fv-result="NOT_VALIDATED" style="display: none;">Please enter a value with valid length</small></div>
+                    </div>
+                    <div class="form-group block" id="trValidation" style="display: none;">
+                        <hr>
+                        <label class="col-xs-12 col-sm-4">
+                            <span id="lblQuestion"></span>
+                        </label>
+                        <div class="col-xs-12 col-sm-5">
+                            <input type="text" class="form-control" id="QuestionResponse" name="QuestionResponse" placeholder="Respuesta Pregunta de Seguridad" maxlength="64" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="Debes registrar la respuesta de seguridad indicada para continuar con el pago" data-fv-stringlength-max="64" data-fv-stringlength-message="El campo respuesta de la pregunta de seguridad debe tener hasta 64 caracteres" data-fv-field="QuestionResponse" title="" data-original-title="Ingresa la respuesta a la pregunta de seguridad">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="QuestionResponse" data-fv-result="NOT_VALIDATED" style="display: none;">Debes registrar la respuesta de seguridad indicada para continuar con el pago</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="QuestionResponse" data-fv-result="NOT_VALIDATED" style="display: none;">El campo respuesta de la pregunta de seguridad debe tener hasta 64 caracteres</small></div>
+                    </div>
+                </div>
+                <div class="form-field-box" id="trRegistrar" style="display: none;">
+                    <div id="trRegistrarPN" class="row">
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label class="col-sm-5">
+                                Tipo de identificación</label>
+                            <div class="wrapper_select2">
+                                <select id="ddTipoIdentificacion" class="form-control" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo Tipo de Identificación es requerido" title="" data-original-title="Selecciona el tipo de identificación de la lista">
+                                    <option value="11">Registro civil de nacimiento</option>
+                                    <option value="12">Tarjeta de identidad</option>
+                                    <option value="13" selected="selected">Cedula de ciudadania</option>
+                                    <option value="21">Tarjeta de extranjeria</option>
+                                    <option value="22">Cedula de extranjeria</option>
+                                    <option value="31">NIT</option>
+                                    <option value="41">Pasaporte</option>
+                                    <option value="42">Documento de identificacion extranjero</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label>
+                                Número de identificación</label>
+                            <input type="text" class="form-control" id="txtNumeroIdentificacion" name="txtNumeroIdentificacion" placeholder="Número de Identificación" maxlength="15" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo número de identificación es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^[a-zA-Z0-9]{1,15}$" data-fv-regexp-message="El campo número de identificación debe tener de 1 hasta 15 posiciones" data-fv-field="txtNumeroIdentificacion" title="" data-original-title="Ingresa tu número de identificación">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtNumeroIdentificacion" data-fv-result="NOT_VALIDATED" style="display: none;">El campo número de identificación es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="txtNumeroIdentificacion" data-fv-result="NOT_VALIDATED" style="display: none;">El campo número de identificación debe tener de 1 hasta 15 posiciones</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtNumeroIdentificacion" data-fv-result="NOT_VALIDATED" style="display: none;">Please enter a value with valid length</small></div>
+                    </div>
+                    <div id="trRegistrarPJ" class="row">
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label>
+                                NIT</label>
+                            <input type="text" class="form-control" id="txtNITPJ" name="txtNITPJ" placeholder="Número de Identificación Tributario" data-toggle="tooltip" data-placement="top" maxlength="15" data-fv-notempty="true" data-fv-notempty-message="El campo NIT es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^[a-zA-Z0-9]{1,15}$" data-fv-regexp-message="El NIT debe ser alfanumérico de 1 hasta 15 caracteres" data-fv-field="txtNITPJ" title="" data-original-title="Ingresa el Número de Identificación Tributario de la empresa">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtNITPJ" data-fv-result="NOT_VALIDATED" style="display: none;">El campo NIT es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="txtNITPJ" data-fv-result="NOT_VALIDATED" style="display: none;">El NIT debe ser alfanumérico de 1 hasta 15 caracteres</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtNITPJ" data-fv-result="NOT_VALIDATED" style="display: none;">Please enter a value with valid length</small></div>
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label>
+                                Nombre de la empresa</label>
+                            <input type="text" class="form-control" id="txtNombrePJ" name="txtNombrePJ" placeholder="Nombre de la empresa" maxlength="64" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo nombre es requerido" data-fv-stringlength-min="1" data-fv-stringlength-max="64" data-fv-stringlength-message="El campo nombre debe tener hasta 64 caracteres" data-fv-field="txtNombrePJ" title="" data-original-title="Ingresa el nombre de la empresa">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtNombrePJ" data-fv-result="NOT_VALIDATED" style="display: none;">El campo nombre es requerido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtNombrePJ" data-fv-result="NOT_VALIDATED" style="display: none;">El campo nombre debe tener hasta 64 caracteres</small></div>
+                    </div>
+                    <div id="trRegistrarNamePN" class="row">
+                        <hr>
+                        <div class="form-group col-xs-12">
+                            <label>
+                                Nombre y apellido</label>
+                            <input type="text" class="form-control" id="txtNombre" name="txtNombre" placeholder="Nombre completo y apellidos" maxlength="64" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo nombre es requerido" data-fv-stringlength-min="1" data-fv-stringlength-max="64" data-fv-stringlength-message="El campo nombre debe tener hasta 64 caracteres" data-fv-field="txtNombre" title="" data-original-title="Ingresa tu nombre completo y apellidos">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtNombre" data-fv-result="NOT_VALIDATED" style="display: none;">El campo nombre es requerido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtNombre" data-fv-result="NOT_VALIDATED" style="display: none;">El campo nombre debe tener hasta 64 caracteres</small></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label>
+                                Número de celular</label>
+                            <input type="text" class="form-control" id="txtNumeroCelular" name="txtNumeroCelular" placeholder="Número de celular" maxlength="10" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo número de celular es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^\d{8,10}$" data-fv-regexp-message="El campo número de celular debe tener de 8 hasta 10 dígitos" data-fv-field="txtNumeroCelular" title="" data-original-title="Ingresa tu número celular">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtNumeroCelular" data-fv-result="NOT_VALIDATED" style="display: none;">El campo número de celular es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="txtNumeroCelular" data-fv-result="NOT_VALIDATED" style="display: none;">El campo número de celular debe tener de 8 hasta 10 dígitos</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtNumeroCelular" data-fv-result="NOT_VALIDATED" style="display: none;">Please enter a value with valid length</small></div>
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label>
+                                Dirección</label>
+                            <input type="text" class="form-control" id="txtDireccionPN" name="txtDireccionPN" placeholder="Dirección de residencia o trabajo" maxlength="255" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo dirección es requerido" data-fv-stringlength-min="1" data-fv-stringlength-max="255" data-fv-stringlength-message="El campo dirección debe tener hasta 255 caracteres" data-fv-field="txtDireccionPN" title="" data-original-title="Ingresa tu dirección">
+                            <input type="text" class="form-control" id="txtDireccionPJ" name="txtDireccionPJ" placeholder="Dirección de la empresa" maxlength="255" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo dirección es requerido" data-fv-stringlength-min="1" data-fv-stringlength-max="255" data-fv-stringlength-message="El campo dirección debe tener hasta 255 caracteres" data-fv-field="txtDireccionPJ" title="" data-original-title="Ingresa tu dirección">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtDireccionPN" data-fv-result="NOT_VALIDATED" style="display: none;">El campo dirección es requerido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtDireccionPN" data-fv-result="NOT_VALIDATED" style="display: none;">El campo dirección debe tener hasta 255 caracteres</small><small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtDireccionPJ" data-fv-result="NOT_VALIDATED" style="display: none;">El campo dirección es requerido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtDireccionPJ" data-fv-result="NOT_VALIDATED" style="display: none;">El campo dirección debe tener hasta 255 caracteres</small></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-sm-6">
+                            <label>
+                                E-mail</label>
+                            <input type="text" class="form-control" id="txtEMail" name="txtEMail" placeholder="E-mail" maxlength="120" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="El campo e-mail es requerido" data-fv-regexp="true" data-fv-regexp-regexp="^[^@\s]+@([^@\s]+\.)+[^@\s]+$" data-fv-regexp-message="El campo e-mail es inválido" data-fv-stringlength-max="120" data-fv-stringlength-message="El campo e-mail debe tener hasta 120 caracteres" data-fv-field="txtEMail" title="" data-original-title="Ingresa tu correo electrónico">
+                            <small class="help-block" data-fv-validator="notEmpty" data-fv-for="txtEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail es requerido</small><small class="help-block" data-fv-validator="regexp" data-fv-for="txtEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail es inválido</small><small class="help-block" data-fv-validator="stringLength" data-fv-for="txtEMail" data-fv-result="NOT_VALIDATED" style="display: none;">El campo e-mail debe tener hasta 120 caracteres</small></div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="terms">
+                            <div id="chkDisclaimerDiv" data-toggle="tooltip" data-placement="left" class="checkbox checkbox-success" title="" data-original-title="Debes aceptar los términos, condiciones y el aviso de privacidad para completar el registro">
+                                <input id="chkDisclaimerNotRegistered" name="chkDisclaimerNotRegistered" type="checkbox" value="" data-toggle="tooltip" data-placement="top" data-fv-notempty="true" data-fv-notempty-message="Debes aceptar los términos, condiciones y el aviso de privacidad para continuar el pago." data-fv-field="chkDisclaimerNotRegistered" data-original-title="" title="">
+                                <label for="chkDisclaimerNotRegistered">
+                                    Acepto voluntariamente los términos, condiciones y el aviso de Política de Privacidad
+                                    de ACH Colombia S.A. <a href="#" onclick="loadUserPolicy('Unregistered');">Ver más</a></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row visible-lg visible-md">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="text-center btns">
+                            <input type="button" id="btnCancel" class="btn btn-primary button-previous" role="button" formnovalidate="" value="Abandonar el pago" onclick="abandonPayment();">
+                            <input type="button" id="btnSeguir" class="btn btn-primary button-next" role="button" value="Seguir" onclick="processStep();">
+                        </div>
+                    </div>
+                </div>
+                <div class="row visible-xs visible-sm">
+                    <div class="col-xs-12 col-sm-12">
+                        <button type="button" id="btnSeguir2" class="btn btn-primary" onclick="processStep();">
+                            Seguir</button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12">
+                        <button type="button" id="btnCancel2" class="btn btn-primary" formnovalidate="" onclick="abandonPayment();">
+                            Abandonar el pago</button>
+                    </div>
+                </div>
+                <div id="divProcessing" class="row col-xs-6 col-sm-6 col-sm-offset-3 nopadding" style="display:none">
+                    <hr>
+                    <h2 class="title text-center">
+                        Estamos procesando tu transacción</h2>
+                    <div class="progress progress-striped active" style="margin-bottom: 0">
+                        <div class="progress-bar" style="width: 100%">
+                        </div>
+                    </div>
+                </div>
+                <small class="help-block" data-fv-validator="notEmpty" data-fv-for="chkDisclaimerNotRegistered" data-fv-result="NOT_VALIDATED" style="display: none;">Debes aceptar los términos, condiciones y el aviso de privacidad para continuar el pago.</small></div>
+        </div>
+        <div class="contact-box container">
+            <div class="row visible-md visible-lg">
+                <div class="col-md-3 col-lg-3">
+                <span class="pull-left">
+                    <img src="assets/footer.jpg" class="img-responsive">
+                </span>
+                </div>
+                <div class="col-md-4 col-lg-4 col-md-offset-5 col-lg-offset-5">
+                <span class="pull-right boxha">
+                    <p>
+                        Para mayor información comunícate con nosotros<br>
+                        <i class="fa fa-mobile"></i>en Bogotá +57 (1) 3808890 opción 2<br>
+                        <i class="fa fa-envelope"></i>o escríbenos <a href="mailto:serviciopse@achcolombia.com.co" target="_blank">serviciopse@achcolombia.com.co</a><br>
+                        Visita <a href="http://www.comprasypagospse.com" target="_blank">www.comprasypagospse.com</a></p>
+                </span>
+                </div>
+            </div>
+            <div class="row visible-xs visible-sm">
+                <div class="col-xs-12 col-sm-12">
+                    <img src="assets/footer.jpg" class="img-responsive boxcen">
+                </div>
+                <div class="col-xs-12 col-sm-12 boxha">
+                <span class="text-center">
+                    <p>
+                        Para mayor información comunícate con nosotros<br>
+                        <i class="fa fa-mobile"></i>en Bogotá +57 (1) 3808890 opción 2<br>
+                        <i class="fa fa-envelope"></i>o escríbenos <a href="mailto:serviciopse@achcolombia.com.co" target="_blank">serviciopse@achcolombia.com.co</a><br>
+                        Visita <a href="http://www.comprasypagospse.com" target="_blank">www.comprasypagospse.com</a></p>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="disclaimerModal" style="display: none" tabindex="-1" role="dialog" aria-labelledby="disclaimerModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="top">
+                        <div class="logo-ach col-xs-12 col-sm-1 text-center">
+                            <img src="assets/logo-pse.png" alt="ACH Colombia" title="ACH Colombia">
+                        </div>
+                        <h4 class="modal-title text-center" id="myModalLabel">
+                            Condiciones de registro en PSE</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span></button>
+                    </div>
+                </div>
+                <div class="modal-body" id="currentUserPolicy" style="overflow-y: auto; max-height: 420px;">
+                </div>
+                <div class="modal-footer">
+                    <div id="chkDisclaimerInModal" data-toggle="tooltip" data-placement="left" class="checkbox checkbox-success" title="" data-original-title="Debes aceptar los términos, condiciones y el aviso de privacidad para completar el registro">
+                        <input id="chkDisclaimer" name="chkDisclaimer" type="checkbox" value="" data-toggle="tooltip" data-placement="top" data-original-title="" title="">
+                        <label for="chkDisclaimer">
+                            Acepto voluntariamente los Términos y Condiciones y el Aviso de Privacidad de ACH
+                            COLOMBIA S.A.</label>
+                    </div>
+                    <div class="row visible-lg visible-md">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <span class="pull-left">
+                                <img src="assets/logomin.jpg" class="img-responsive"></span>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 col-lg-offset-6 col-md-offset-6 col-sm-offset-6 col-xs-offset-6">
+                            <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">
+                                Cerrar</button>
+                        </div>
+                    </div>
+                    <div class="row visible-sm visible-xs">
+                        <div class="col-sm-12 col-xs-12 center-block">
+                            <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">
+                                Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+</body></html>
