@@ -316,24 +316,24 @@
             alert('Ocurrió un error aceptando la nueva política de usuarios, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
         }
 
-        function redirectToBank() {
-            var seconds = getFingerprintElapsedSeconds();
-            if ((finger == null || finger.length == 0) && seconds < 10) {
-                alert('Por favor aguarde más ' + Math.ceil(10 - seconds).toString() + ' segundo para seguir con la transacción');
-                return;
-            }
-            $("#divProcessing").show();
-            $("#btnSeguir").prop("disabled", true);
-            $.ajax({
-                url: "api/RedirectToBank",
-                type: "POST",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({ 'enc': qs("enc"), 'Fingerprint': getFinger(), 'rdPersona': getPersonType(), 'rdOption': getOption(), 'EMail': getEMail(), 'NIT': $("#PJNIT").val(), 'Answer': $("#QuestionResponse").val(), 'txtNombre': getName(), 'ddTipoIdentificacion': getIdType(), 'txtNumeroIdentificacion': getId(), 'txtDireccion': getAddress(), 'txtNumeroCelular': $("#txtNumeroCelular").val(), 'txtEMail': $("#txtEMail").val() }),
-                dataType: "json",
-                success: redirectToBankSuccess,
-                error: redirectToBankError
-            });
-        }
+        // function redirectToBank() {
+        //     var seconds = getFingerprintElapsedSeconds();
+        //     if ((finger == null || finger.length == 0) && seconds < 10) {
+        //         alert('Por favor aguarde más ' + Math.ceil(10 - seconds).toString() + ' segundo para seguir con la transacción');
+        //         return;
+        //     }
+        //     $("#divProcessing").show();
+        //     $("#btnSeguir").prop("disabled", true);
+        //     $.ajax({
+        //         url: "api/RedirectToBank",
+        //         type: "POST",
+        //         contentType: "application/json; charset=utf-8",
+        //         data: JSON.stringify({ 'enc': qs("enc"), 'Fingerprint': getFinger(), 'rdPersona': getPersonType(), 'rdOption': getOption(), 'EMail': getEMail(), 'NIT': $("#PJNIT").val(), 'Answer': $("#QuestionResponse").val(), 'txtNombre': getName(), 'ddTipoIdentificacion': getIdType(), 'txtNumeroIdentificacion': getId(), 'txtDireccion': getAddress(), 'txtNumeroCelular': $("#txtNumeroCelular").val(), 'txtEMail': $("#txtEMail").val() }),
+        //         dataType: "json",
+        //         success: redirectToBankSuccess,
+        //         error: redirectToBankError
+        //     });
+        // }
 
         function getFinger() {
             if (finger != null)
@@ -370,37 +370,37 @@
                 return $("#txtDireccionPJ").val();
         }
 
-        function redirectToBankSuccess(data) {
-            try {
-                if (data != null) {
-                    var resp = JSON.parse(data);
-                    if (resp.Success)
-                        window.location.href = resp.URL;
-                    else {
-                        if (resp.Reload)
-                            window.location.href = window.location.href;
-                        else
-                            alert(resp.ErrorMessage);
-                    }
-                }
-                else
-                    alert("Ocurrió un error seguindo con la transacción, inténtalo nuevamente.");
-            }
-            finally {
-                $("#divProcessing").hide();
-                $("#btnSeguir").prop("disabled", false);
-            }
-        }
+        // function redirectToBankSuccess(data) {
+        //     try {
+        //         if (data != null) {
+        //             var resp = JSON.parse(data);
+        //             if (resp.Success)
+        //                 window.location.href = resp.URL;
+        //             else {
+        //                 if (resp.Reload)
+        //                     window.location.href = window.location.href;
+        //                 else
+        //                     alert(resp.ErrorMessage);
+        //             }
+        //         }
+        //         else
+        //             alert("Ocurrió un error seguindo con la transacción, inténtalo nuevamente.");
+        //     }
+        //     finally {
+        //         $("#divProcessing").hide();
+        //         $("#btnSeguir").prop("disabled", false);
+        //     }
+        // }
 
-        function redirectToBankError(error) {
-            try {
-                alert('Ocurrió un error seguindo con la transacción, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
-            }
-            finally {
-                $("#divProcessing").hide();
-                $("#btnSeguir").prop("disabled", false);
-            }
-        }
+        // function redirectToBankError(error) {
+        //     try {
+        //         alert('Ocurrió un error seguindo con la transacción, inténtalo nuevamente. Status: ' + error.status + " - " + error.statusText);
+        //     }
+        //     finally {
+        //         $("#divProcessing").hide();
+        //         $("#btnSeguir").prop("disabled", false);
+        //     }
+        // }
 
         function processStep() {
             $('#form1').data('formValidation').validate();
@@ -702,7 +702,7 @@
                     <div class="col-lg-12 col-md-12">
                         <div class="text-center btns">
                             <input type="button" id="btnCancel" class="btn btn-primary button-previous" role="button" formnovalidate="" value="Abandonar el pago" onclick="abandonPayment();">
-                            <a href="https://freeven-srv.herokuapp.com/#/donation_return" type="button" id="btnSeguir" class="btn btn-primary button-next" role="button" value="Seguir" onclick="processStep();">Seguir</a>
+                            <a type="button" id="btnSeguir" class="btn btn-primary button-next" role="button" value="Seguir">Seguir</a>
                         </div>
                     </div>
                 </div>
@@ -805,5 +805,184 @@
     </div>
 </form>
 
+
+<div class="modal fade" id="modalpago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" action="#" id="formpago">
+          <fieldset>
+
+          <!-- Form Name -->
+          <legend>Donación - Sonidos Libres</legend>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="textinput">Email</label>
+            <div class="col-md-4">
+            <input id="textinput" name="textinput" type="text" placeholder="" class="form-control input-md" required="">
+
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="textinput">Nombre</label>
+            <div class="col-md-5">
+            <input id="textinput" name="textinput" type="text" placeholder="" class="form-control input-md" required="">
+            <span class="help-block">Nombre como aparece en la tarjeta</span>
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="textinput">Número de la tarjeta</label>
+            <div class="col-md-4">
+            <input id="textinput" name="textinput" type="text" placeholder="" class="form-control input-md">
+
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="textinput">Código de Seguridad</label>
+            <div class="col-md-2">
+            <input id="textinput" name="textinput" type="text" placeholder="" class="form-control input-md" required="">
+            <span class="help-block">3 dígitos </span>
+            </div>
+          </div>
+
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="textinput">Monto a donar</label>
+            <div class="col-md-2">
+            <input id="textinput" name="textinput" type="text" placeholder="" class="form-control input-md" required="">
+            <span class="help-block">En dólares</span>
+            </div>
+          </div>
+
+          <!-- Select Basic -->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="selectbasic">Vencimiento</label>
+            <div class="col-md-2">
+              <select id="selectbasic" name="selectbasic" class="form-control">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select id="selectbasic" name="selectbasic" class="form-control">
+                <option value="1">2017</option>
+                <option value="2">2018</option>
+                <option value="3">2019</option>
+                <option value="4">2020</option>
+                <option value="5">2021</option>
+                <option value="6">2022</option>
+              </select>
+            </div>
+          </div>
+          <!-- Button (Double) -->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="button1id"></label>
+            <div class="col-md-8">
+              <button id="button1id" name="button1id" class="btn btn-success" id="btnpagar">Pagar</button>
+              <button id="button2id" name="button2id" class="btn btn-danger">Abandonar</button>
+              <br/>
+            </div>
+          </div>
+
+          </fieldset>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <br/>
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalpagando" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+          <!-- Form Name -->
+          <legend>Realizando pago</legend>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="10"
+            aria-valuemin="0" aria-valuemax="100" style="width:0%">
+              <span class="sr-only">70% Complete</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function getUrlVars()
+  {
+      var vars = [], hash;
+      var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+      for(var i = 0; i < hashes.length; i++)
+      {
+          hash = hashes[i].split('=');
+          vars.push(hash[0]);
+          vars[hash[0]] = hash[1];
+      }
+      return vars;
+  }
+  $("#btnSeguir").on('click', function(){
+    $('#modalpago').modal('show');
+  });
+  $("#btnpagar").on('click', function(){
+    console.log("hola");
+    $('#modalpago').modal('hide');
+    $('#modalpagando').modal('show');
+  });
+  $("#formpago").submit(function(e){
+    $('#modalpago').modal('hide');
+    $('#modalpagando').modal('show');
+    var payment_progress = 0;
+    var interval = setInterval(function () {
+      $(".progress-bar").css('width', payment_progress + '%');
+      payment_progress += 10;
+      if(payment_progress>=100){
+        $(".progress-bar").css('width', payment_progress + '%');
+        clearInterval(interval);
+        setTimeout(function(){
+          $('#modalpagando').modal('hide');
+          alert("Donación realizada!");
+          window.location.replace("https://freeven-srv.herokuapp.com/#/donation_return");
+        }, 1000 )
+      }
+    }, 500);
+    return false;
+  });
+</script>
+
+<style media="screen">
+.progress-bar {
+  -webkit-transition: width .2s ease;
+  transition: width .2s ease;
+}
+</style>
 
 </body></html>
