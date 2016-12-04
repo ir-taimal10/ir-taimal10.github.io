@@ -3,6 +3,7 @@
 // (c) 2015 Rembound.com
 // http://rembound.com/articles/creating-a-snake-game-tutorial-with-html5
 // ------------------------------------------------------------
+
 window.onload = function () {
     var m = document.getElementById("viewport");
     var K = m.getContext("2d");
