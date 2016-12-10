@@ -19,7 +19,7 @@
 // ------------------------------------------------------------
 
 // The function gets called when the window is fully loaded
-window.onload = function() {
+window.onload = function () {
     // Get the canvas and context
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
@@ -40,6 +40,14 @@ window.onload = function() {
     var loadcount = 0;
     var loadtotal = 0;
     var preloaded = false;
+    var audio;
+
+    var songs = [
+        "http://www.musicpophits.com/MainPages/Music/FrankSinatra/LoveAndMarriage.mp3",
+        "http://www.musicpophits.com/MainPages/Music/FrankSinatra/Everybody'sTwistin.mp3",
+        "http://www.musicpophits.com/MainPages/Music/FrankSinatra/FlyMeToTheMoon.mp3",
+        "http://www.musicpophits.com/MainPages/Music/FrankSinatra/Granada.mp3"
+    ];
 
     // Load images
     function loadImages(imagefiles) {
@@ -50,7 +58,7 @@ window.onload = function() {
 
         // Load the images
         var loadedimages = [];
-        for (var i=0; i<imagefiles.length; i++) {
+        for (var i = 0; i < imagefiles.length; i++) {
             // Create the image object
             var image = new Image();
 
@@ -83,20 +91,20 @@ window.onload = function() {
 
         // Initialize tiles array
         this.tiles = [];
-        for (var i=0; i<this.columns; i++) {
+        for (var i = 0; i < this.columns; i++) {
             this.tiles[i] = [];
-            for (var j=0; j<this.rows; j++) {
+            for (var j = 0; j < this.rows; j++) {
                 this.tiles[i][j] = 0;
             }
         }
     };
 
     // Generate a default level with walls
-    Level.prototype.generate = function() {
-        for (var i=0; i<this.columns; i++) {
-            for (var j=0; j<this.rows; j++) {
-                if (i == 0 || i == this.columns-1 ||
-                    j == 0 || j == this.rows-1) {
+    Level.prototype.generate = function () {
+        for (var i = 0; i < this.columns; i++) {
+            for (var j = 0; j < this.rows; j++) {
+                if (i == 0 || i == this.columns - 1 ||
+                    j == 0 || j == this.rows - 1) {
                     // Add walls at the edges of the level
                     this.tiles[i][j] = 1;
                 } else {
@@ -109,7 +117,7 @@ window.onload = function() {
 
 
     // Snake
-    var Snake = function() {
+    var Snake = function () {
         this.init(0, 0, 1, 10, 1);
     }
 
@@ -117,7 +125,7 @@ window.onload = function() {
     Snake.prototype.directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
     // Initialize the snake at a location
-    Snake.prototype.init = function(x, y, direction, speed, numsegments) {
+    Snake.prototype.init = function (x, y, direction, speed, numsegments) {
         this.x = x;
         this.y = y;
         this.direction = direction; // Up, Right, Down, Left
@@ -127,19 +135,21 @@ window.onload = function() {
         // Reset the segments and add new ones
         this.segments = [];
         this.growsegments = 0;
-        for (var i=0; i<numsegments; i++) {
-            this.segments.push({x:this.x - i*this.directions[direction][0],
-                y:this.y - i*this.directions[direction][1]});
+        for (var i = 0; i < numsegments; i++) {
+            this.segments.push({
+                x: this.x - i * this.directions[direction][0],
+                y: this.y - i * this.directions[direction][1]
+            });
         }
     }
 
     // Increase the segment count
-    Snake.prototype.grow = function() {
+    Snake.prototype.grow = function () {
         this.growsegments++;
     };
 
     // Check we are allowed to move
-    Snake.prototype.tryMove = function(dt) {
+    Snake.prototype.tryMove = function (dt) {
         this.movedelay += dt;
         var maxmovedelay = 1 / this.speed;
         if (this.movedelay > maxmovedelay) {
@@ -149,33 +159,33 @@ window.onload = function() {
     };
 
     // Get the position of the next move
-    Snake.prototype.nextMove = function() {
+    Snake.prototype.nextMove = function () {
         var nextx = this.x + this.directions[this.direction][0];
         var nexty = this.y + this.directions[this.direction][1];
-        return {x:nextx, y:nexty};
+        return {x: nextx, y: nexty};
     }
 
     // Move the snake in the direction
-    Snake.prototype.move = function() {
+    Snake.prototype.move = function () {
         // Get the next move and modify the position
         var nextmove = this.nextMove();
         this.x = nextmove.x;
         this.y = nextmove.y;
 
         // Get the position of the last segment
-        var lastseg = this.segments[this.segments.length-1];
+        var lastseg = this.segments[this.segments.length - 1];
         var growx = lastseg.x;
         var growy = lastseg.y;
 
         // Move segments to the position of the previous segment
-        for (var i=this.segments.length-1; i>=1; i--) {
-            this.segments[i].x = this.segments[i-1].x;
-            this.segments[i].y = this.segments[i-1].y;
+        for (var i = this.segments.length - 1; i >= 1; i--) {
+            this.segments[i].x = this.segments[i - 1].x;
+            this.segments[i].y = this.segments[i - 1].y;
         }
 
         // Grow a segment if needed
         if (this.growsegments > 0) {
-            this.segments.push({x:growx, y:growy});
+            this.segments.push({x: growx, y: growy});
             this.growsegments--;
         }
 
@@ -217,9 +227,16 @@ window.onload = function() {
         main(0);
     }
 
+    function getRandomSong() {
+        var random = Math.floor((Math.random() * songs.length));
+        return songs[random];
+    }
+
     // Check if we can start a new game
     function tryNewGame() {
         if (gameovertime > gameoverdelay) {
+            audio = new Audio(getRandomSong());
+            audio.play();
             newGame();
             gameover = false;
         }
@@ -248,12 +265,12 @@ window.onload = function() {
         var valid = false;
         while (!valid) {
             // Get a random position
-            var ax = randRange(0, level.columns-1);
-            var ay = randRange(0, level.rows-1);
+            var ax = randRange(0, level.columns - 1);
+            var ay = randRange(0, level.rows - 1);
 
             // Make sure the snake doesn't overlap the new apple
             var overlap = false;
-            for (var i=0; i<snake.segments.length; i++) {
+            for (var i = 0; i < snake.segments.length; i++) {
                 // Get the position of the current snake segment
                 var sx = snake.segments[i].x;
                 var sy = snake.segments[i].y;
@@ -286,12 +303,12 @@ window.onload = function() {
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw a progress bar
-            var loadpercentage = loadcount/loadtotal;
+            var loadpercentage = loadcount / loadtotal;
             context.strokeStyle = "#ff8080";
-            context.lineWidth=3;
-            context.strokeRect(18.5, 0.5 + canvas.height - 51, canvas.width-37, 32);
+            context.lineWidth = 3;
+            context.strokeRect(18.5, 0.5 + canvas.height - 51, canvas.width - 37, 32);
             context.fillStyle = "#ff8080";
-            context.fillRect(18.5, 0.5 + canvas.height - 51, loadpercentage*(canvas.width-37), 32);
+            context.fillRect(18.5, 0.5 + canvas.height - 51, loadpercentage * (canvas.width - 37), 32);
 
             // Draw the progress text
             var loadtext = "Loaded " + loadcount + "/" + loadtotal + " images";
@@ -341,7 +358,7 @@ window.onload = function() {
                 }
 
                 // Collisions with the snake itself
-                for (var i=0; i<snake.segments.length; i++) {
+                for (var i = 0; i < snake.segments.length; i++) {
                     var sx = snake.segments[i].x;
                     var sy = snake.segments[i].y;
 
@@ -382,6 +399,7 @@ window.onload = function() {
 
             if (gameover) {
                 gameovertime = 0;
+                audio.pause();
             }
         }
     }
@@ -417,18 +435,18 @@ window.onload = function() {
 
             context.fillStyle = "#ffffff";
             context.font = "24px Verdana";
-            drawCenterText("Hi! Press any key to start!", 0, canvas.height/2, canvas.width);
+            drawCenterText("Hi! Press any key to start!", 0, canvas.height / 2, canvas.width);
         }
     }
 
     // Draw the level tiles
     function drawLevel() {
-        for (var i=0; i<level.columns; i++) {
-            for (var j=0; j<level.rows; j++) {
+        for (var i = 0; i < level.columns; i++) {
+            for (var j = 0; j < level.rows; j++) {
                 // Get the current tile and location
                 var tile = level.tiles[i][j];
-                var tilex = i*level.tilewidth;
-                var tiley = j*level.tileheight;
+                var tilex = i * level.tilewidth;
+                var tiley = j * level.tileheight;
 
                 // Draw tiles based on their type
                 if (tile == 0) {
@@ -451,7 +469,7 @@ window.onload = function() {
                     var ty = 3;
                     var tilew = 64;
                     var tileh = 64;
-                    context.drawImage(tileimage, tx*tilew, ty*tileh, tilew, tileh, tilex, tiley, level.tilewidth, level.tileheight);
+                    context.drawImage(tileimage, tx * tilew, ty * tileh, tilew, tileh, tilex, tiley, level.tilewidth, level.tileheight);
                 }
             }
         }
@@ -460,12 +478,12 @@ window.onload = function() {
     // Draw the snake
     function drawSnake() {
         // Loop over every snake segment
-        for (var i=0; i<snake.segments.length; i++) {
+        for (var i = 0; i < snake.segments.length; i++) {
             var segment = snake.segments[i];
             var segx = segment.x;
             var segy = segment.y;
-            var tilex = segx*level.tilewidth;
-            var tiley = segy*level.tileheight;
+            var tilex = segx * level.tilewidth;
+            var tiley = segy * level.tileheight;
 
             // Sprite column and row that gets calculated
             var tx = 0;
@@ -473,63 +491,77 @@ window.onload = function() {
 
             if (i == 0) {
                 // Head; Determine the correct image
-                var nseg = snake.segments[i+1]; // Next segment
+                var nseg = snake.segments[i + 1]; // Next segment
                 if (segy < nseg.y) {
                     // Up
-                    tx = 3; ty = 0;
+                    tx = 3;
+                    ty = 0;
                 } else if (segx > nseg.x) {
                     // Right
-                    tx = 4; ty = 0;
+                    tx = 4;
+                    ty = 0;
                 } else if (segy > nseg.y) {
                     // Down
-                    tx = 4; ty = 1;
+                    tx = 4;
+                    ty = 1;
                 } else if (segx < nseg.x) {
                     // Left
-                    tx = 3; ty = 1;
+                    tx = 3;
+                    ty = 1;
                 }
-            } else if (i == snake.segments.length-1) {
+            } else if (i == snake.segments.length - 1) {
                 // Tail; Determine the correct image
-                var pseg = snake.segments[i-1]; // Prev segment
+                var pseg = snake.segments[i - 1]; // Prev segment
                 if (pseg.y < segy) {
                     // Up
-                    tx = 3; ty = 2;
+                    tx = 3;
+                    ty = 2;
                 } else if (pseg.x > segx) {
                     // Right
-                    tx = 4; ty = 2;
+                    tx = 4;
+                    ty = 2;
                 } else if (pseg.y > segy) {
                     // Down
-                    tx = 4; ty = 3;
+                    tx = 4;
+                    ty = 3;
                 } else if (pseg.x < segx) {
                     // Left
-                    tx = 3; ty = 3;
+                    tx = 3;
+                    ty = 3;
                 }
             } else {
                 // Body; Determine the correct image
-                var pseg = snake.segments[i-1]; // Previous segment
-                var nseg = snake.segments[i+1]; // Next segment
+                var pseg = snake.segments[i - 1]; // Previous segment
+                var nseg = snake.segments[i + 1]; // Next segment
                 if (pseg.x < segx && nseg.x > segx || nseg.x < segx && pseg.x > segx) {
                     // Horizontal Left-Right
-                    tx = 1; ty = 0;
+                    tx = 1;
+                    ty = 0;
                 } else if (pseg.x < segx && nseg.y > segy || nseg.x < segx && pseg.y > segy) {
                     // Angle Left-Down
-                    tx = 2; ty = 0;
+                    tx = 2;
+                    ty = 0;
                 } else if (pseg.y < segy && nseg.y > segy || nseg.y < segy && pseg.y > segy) {
                     // Vertical Up-Down
-                    tx = 2; ty = 1;
+                    tx = 2;
+                    ty = 1;
                 } else if (pseg.y < segy && nseg.x < segx || nseg.y < segy && pseg.x < segx) {
                     // Angle Top-Left
-                    tx = 2; ty = 2;
+                    tx = 2;
+                    ty = 2;
                 } else if (pseg.x > segx && nseg.y < segy || nseg.x > segx && pseg.y < segy) {
                     // Angle Right-Up
-                    tx = 0; ty = 1;
+                    tx = 0;
+                    ty = 1;
                 } else if (pseg.y > segy && nseg.x > segx || nseg.y > segy && pseg.x > segx) {
                     // Angle Down-Right
-                    tx = 0; ty = 0;
+                    tx = 0;
+                    ty = 0;
                 }
             }
 
             // Draw the image of the snake part
-            context.drawImage(tileimage, tx*64, ty*64, 64, 64, tilex, tiley,
+            context.drawImage(tileimage, tx * 64, ty * 64, 64, 64, tilex, tiley,
                 level.tilewidth, level.tileheight);
         }
     }
@@ -537,12 +569,12 @@ window.onload = function() {
     // Draw text that is centered
     function drawCenterText(text, x, y, width) {
         var textdim = context.measureText(text);
-        context.fillText(text, x + (width-textdim.width)/2, y);
+        context.fillText(text, x + (width - textdim.width) / 2, y);
     }
 
     // Get a random int between low and high, inclusive
     function randRange(low, high) {
-        return Math.floor(low + Math.random()*(high-low+1));
+        return Math.floor(low + Math.random() * (high - low + 1));
     }
 
     // Mouse event handlers
@@ -566,22 +598,22 @@ window.onload = function() {
         } else {
             if (e.keyCode == 37 || e.keyCode == 65) {
                 // Left or A
-                if (snake.direction != 1)  {
+                if (snake.direction != 1) {
                     snake.direction = 3;
                 }
             } else if (e.keyCode == 38 || e.keyCode == 87) {
                 // Up or W
-                if (snake.direction != 2)  {
+                if (snake.direction != 2) {
                     snake.direction = 0;
                 }
             } else if (e.keyCode == 39 || e.keyCode == 68) {
                 // Right or D
-                if (snake.direction != 3)  {
+                if (snake.direction != 3) {
                     snake.direction = 1;
                 }
             } else if (e.keyCode == 40 || e.keyCode == 83) {
                 // Down or S
-                if (snake.direction != 0)  {
+                if (snake.direction != 0) {
                     snake.direction = 2;
                 }
             }
@@ -597,8 +629,8 @@ window.onload = function() {
     function getMousePos(canvas, e) {
         var rect = canvas.getBoundingClientRect();
         return {
-            x: Math.round((e.clientX - rect.left)/(rect.right - rect.left)*canvas.width),
-            y: Math.round((e.clientY - rect.top)/(rect.bottom - rect.top)*canvas.height)
+            x: Math.round((e.clientX - rect.left) / (rect.right - rect.left) * canvas.width),
+            y: Math.round((e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
         };
     }
 
