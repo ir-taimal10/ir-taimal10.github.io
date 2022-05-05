@@ -2,7 +2,7 @@
     body {
         margin: 0;
         padding: 0px;
-        text-align: center;
+        text-align: right;
     }
 
     #viewport {
@@ -16,7 +16,7 @@
     body {
         margin: 0;
         padding: auto;
-        text-align: center;
+        text-align: right;
     }
 
     #viewport {

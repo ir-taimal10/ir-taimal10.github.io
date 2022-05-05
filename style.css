@@ -1,6 +1,8 @@
 .experience-nav{
     margin-top: 10px;
     padding-left: 0;
+    padding-right: 0;
+    list-style: none;
 }
 
 .experience-nav__item a:after{
