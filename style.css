@@ -1,10 +1,77 @@
-.experience-nav{
-    margin-top: 10px;
-    padding-left: 0;
-    padding-right: 0;
-    list-style: none;
+body {
+    margin: 0;
 }
 
-.experience-nav__item a:after{
-    content: "|";
+.my-profile {
+    display: flex;
+
+}
+
+.my-profile__left {
+    width: 40%;
+    background-color: red;
+}
+
+.my-profile__right {
+    width: 60%;
+    background-color: rgba(255, 0, 0, 0.66);
+}
+
+.my-profile__photo {
+    min-height: 60px;
+    background-color: rgba(0, 0, 255, 0.61);
+}
+
+.my-profile__item {
+    display: block;
+    margin: 16px 16px 8px 16px;
+    min-height: 40px;
+
+}
+
+.box-blue {
+    border: 1px solid rgba(255, 255, 255, 0.61);
+    background-color: rgba(0, 0, 0, 0.37);
+}
+
+.box-black {
+    border: 1px solid rgba(26, 26, 25, 0.61);
+    background-color: rgba(144, 148, 142, 0.61);
+}
+
+.box-green {
+    border: 1px solid rgba(75, 227, 22, 0.61);
+    background-color: rgba(184, 231, 168, 0.52);
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    .my-profile{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .my-profile__right{
+        width: 100%;
+    }
+
+    .my-profile__left {
+        width: 100%;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
 }
