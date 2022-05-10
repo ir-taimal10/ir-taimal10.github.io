@@ -4,22 +4,20 @@ body {
 
 .my-profile {
     display: flex;
+    justify-content: center;
 
 }
 
 .my-profile__left {
     width: 38%;
+    max-width: 466px;
     background-color: red;
 }
 
 .my-profile__right {
     width: 62%;
+    max-width: 734px;
     background-color: rgba(255, 0, 0, 0.66);
-}
-
-.my-profile__photo {
-    min-height: 60px;
-    background-color: rgba(0, 0, 255, 0.61);
 }
 
 .my-profile__item {
@@ -98,6 +96,32 @@ body {
     margin: 0px 16px 16px 16px;
 }
 
+.my-profile__explab{
+    text-align: left;
+    font-family: 'Oswald', serif;
+    font-size: 18px;
+    margin: 8px 16px 0px 16px;
+}
+
+.my-profile__subexplab{
+    text-align: left;
+    font-family: Roboto, serif;
+    font-size: 16px;
+    margin: 0px 16px 8px 16px;
+}
+
+.my-profile__rightexplab{
+    text-align: right;
+    font-family: Roboto, serif;
+    font-size: 16px;
+    margin: 0px 16px 8px 16px;
+}
+
+.my-profile-footer{
+    text-align: right;
+    font-family: Roboto, serif;
+    margin: 0px 50px 16px 16px;
+}
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
 }
