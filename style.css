@@ -14,15 +14,21 @@ body {
 
 }
 
+.my-profile-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .my-profile__primary {
     width: 38%;
-    max-width: 466px;
+    max-width: 600px;
     background-color: #c2c1c1;
 }
 
 .my-profile__secondary {
     width: 62%;
-    max-width: 734px;
+    max-width: 979px;
     background-color: rgba(255, 255, 255, 0.66);
 }
 
@@ -56,55 +62,56 @@ body {
     text-align: justify;
     font-family: Roboto, serif;
     font-size: 18px;
-    margin: 20px 16px 20px 16px;
+    margin: 24px 24px 24px 24px;
 }
 
 .my-profile__comlab {
     text-align: justify;
     font-family: 'Oswald', serif;
     font-size: 22px;
-    margin: 36px 16px 4px 16px;
+    margin: 40px 24px 8px 24px;
 }
 
 .my-profile__comlab-inf {
+    text-overflow: ellipsis;
     text-align: justify;
     font-family: Roboto, serif;
     font-size: 18px;
-    margin: 12px 16px 16px 16px;
+    margin: 16px 24px 24px 24px;
 }
 
 .my-profile__publication {
     text-align: justify;
     font-family: Roboto, serif;
     font-size: 18px;
-    margin: 12px 16px 0px 16px;
+    margin: 16px 24px 0px 24px;
 }
 
 .my-profile__publication-inf {
     font-family: Roboto, serif;
     font-size: 15px;
-    margin: 0px 16px 16px 16px;
+    margin: 0px 24px 16px 24px;
 }
 
 .my-profile__explab {
     text-align: left;
     font-family: 'Oswald', serif;
     font-size: 18px;
-    margin: 8px 16px 0px 16px;
+    margin: 8px 24px 0px 24px;
 }
 
 .my-profile__subexplab {
     text-align: left;
     font-family: Roboto, serif;
     font-size: 16px;
-    margin: 0px 16px 8px 16px;
+    margin: 0px 24px 0px 24px;
 }
 
 .my-profile__secondaryexplab {
     text-align: right;
     font-family: Roboto, serif;
     font-size: 16px;
-    margin: 0px 16px 8px 16px;
+    margin: 0px 24px 0px 24px;
 }
 
 .my-profile-footer {
