@@ -8,12 +8,12 @@ body {
 }
 
 .my-profile__left {
-    width: 40%;
+    width: 38%;
     background-color: red;
 }
 
 .my-profile__right {
-    width: 60%;
+    width: 62%;
     background-color: rgba(255, 0, 0, 0.66);
 }
 
@@ -34,19 +34,39 @@ body {
     height: 200px;
 }
 
-.box-blue {
-    border: 1px solid rgba(255, 255, 255, 0.61);
-    background-color: rgba(0, 0, 0, 0.37);
+.my-profile__main-tittle{
+    text-align: center;
+    font-family: 'Oswald', serif;
+    font-size: 36px;
+    margin: 0;
 }
 
-.box-black {
-    border: 1px solid rgba(26, 26, 25, 0.61);
-    background-color: rgba(144, 148, 142, 0.61);
+.my-profile__main-desc{
+    text-align: center;
+    font-family: Roboto, serif;
+    font-size: 15px;
+    margin: 0;
 }
 
-.box-green {
-    border: 1px solid rgba(75, 227, 22, 0.61);
-    background-color: rgba(184, 231, 168, 0.52);
+.my-profile__desclong{
+    text-align: justify;
+    font-family: Roboto, serif;
+    font-size: 18px;
+    margin: 20px 16px 20px 16px;
+}
+
+.my-profile__comlab{
+    text-align: justify;
+    font-family: 'Oswald', serif;
+    font-size: 22px;
+    margin: 36px 16px 4px 16px;
+}
+
+.my-profile__comlab-inf{
+    text-align: justify;
+    font-family: Roboto, serif;
+    font-size: 18px;
+    margin: 12px 16px 16px 16px;
 }
 
 /* Extra small devices (phones, 600px and down) */
@@ -63,6 +83,19 @@ body {
     .my-profile__left {
         width: 100%;
     }
+}
+
+.my-profile__publication{
+    text-align: justify;
+    font-family: Roboto, serif;
+    font-size: 18px;
+    margin: 12px 16px 0px 16px;
+}
+
+.my-profile__publication-inf{
+    font-family: Roboto, serif;
+    font-size: 15px;
+    margin: 0px 16px 16px 16px;
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
