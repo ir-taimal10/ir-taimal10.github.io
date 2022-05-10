@@ -9,6 +9,14 @@
 
 </head>
 <body>
+
+<svg xmlns="http://www.w4.org/2000/svg" width="0" height="0" display="none">
+    <symbol id="profile-item" viewBox="0 0 16 16">
+        <path d="M6 5H3v3h3V5zM5 7H4V6h1v1zm2-2h4v1H7zm0 2h4v1H7zM3 9h8v1H3zm0 2h8v1H3z"/>
+        <path d="M13.5 5H13v-.5A1.5 1.5 0 0 0 11.5 3h-9A1.5 1.5 0 0 0 1 4.5v8A1.5 1.5 0 0 0 2.5 14h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 13.5 5zM12 13H2.5a.5.5 0 0 1-.5-.5v-8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5V13zm2-.5a.5.5 0 0 1-.5.5H13V6h.5a.5.5 0 0 1 .5.5v6z"/>
+    </symbol>
+</svg>
+
 <link rel="stylesheet" href="style.css">
 
 <div class="my-profile box-blue">
@@ -25,13 +33,24 @@
             </figure>
         </section>
 
-        <h3 class="my-profile__comlab">Información</h3>
+
+        <h3 class="my-profile__comlab">
+            <svg width="32px" height="32px" aria-label="informacion" class="my-profile-icon">
+                <use href="#profile-item"></use>
+            </svg>
+            Información
+        </h3>
         <p class="my-profile__comlab-inf">
             Correo: rtaimal@gmail.com <br>
             <a href="https://www.linkedin.com/in/rtaimal/" target="_blank">https://www.linkedin.com/in/rtaimal/</a>
         </p>
 
-        <h3 class="my-profile__comlab">Educación</h3>
+        <h3 class="my-profile__comlab">
+            <svg width="32px" height="32px" aria-label="informacion" class="my-profile-icon">
+                <use href="#profile-item"></use>
+            </svg>
+            Educación
+        </h3>
         <p class="my-profile__comlab-inf">
             <b> Ingeniería en Electrónica y Telecomunicaciones </b> <br>
             Universidad del Cauca. Junio 2009. <br>
@@ -44,7 +63,12 @@
             Bogotá D.C<br>
         </p>
 
-        <h3 class="my-profile__comlab">Certificaciones</h3>
+        <h3 class="my-profile__comlab">
+            <svg width="32px" height="32px" aria-label="informacion" class="my-profile-icon">
+                <use href="#profile-item"></use>
+            </svg>
+            Certificaciones
+        </h3>
         <ul class="my-profile__comlab-inf">
             <li>AWS Certified Solutions Architect – Professional (SAP-C01)</li>
             <li>AWS Certified Solutions Architect – Associate (SAA-C02)</li>
@@ -63,7 +87,7 @@
         <p class="my-profile__publication">
             D. F. Rueda, I. R. Taimal, W. Y. Campo, J. L. <br>
             Arciniegas, <b>“Analysis of the DOCSIS protocol
-            for distribution of TDi applications and contents in a HFC network”.</b> </p>
+            for distribution of TDi applications and contents in a HFC network”.</b></p>
         <p class="my-profile__publication-inf">
             Revista avances en sistemas e informática, Universidad Nacional de Colombia,
             Colombia, vol. 6, no.3, Dic. 2009, pp. 119-132.
@@ -135,10 +159,13 @@
 
     <div class="my-profile__right">
 
-        <h1 class="my-profile__main-tittle">Iván Ricardo Taimal Narváez</h1>
-        <p class="my-profile__main-desc">Ingeniero en Electrónica y Telecomunicaciones - Universidad del Cauca, <br>
-            Magister en Ingeniería del software - Universidad de los Andes
-        </p>
+        <header>
+            <h1 class="my-profile__main-tittle">Iván Ricardo Taimal Narváez</h1>
+            <p class="my-profile__main-desc">Ingeniero en Electrónica y Telecomunicaciones - Universidad del Cauca, <br>
+                Magister en Ingeniería del software - Universidad de los Andes
+            </p>
+        </header>
+
         <p class="my-profile__desclong">
             Soy ingeniero en electrónica y telecomunicaciones de la Universidad del Cauca y
             Magíster en Ingeniería de Software de la Universidad de los Andes.
@@ -153,8 +180,9 @@
             Me he centrado en el desarrollo Front-end y en la construcción de aplicaciones como Javascript fullstack,
             siempre tratando de capturar en mi trabajo la dedicación y pasión por lo que hago. <br>
 
-            Soy capaz de  integrar, desplegar y configurar  servicios en AWS, Azure y Heroku.
+            Soy capaz de integrar, desplegar y configurar servicios en AWS, Azure y Heroku.
         </p>
+
 
         <h3 class="my-profile__comlab"> Competencias Laborales </h3>
 
@@ -184,14 +212,15 @@
         </p>
         <p class="my-profile__comlab-inf">
             <b>AWS solutions expertise:</b> <br>
-            EC2, S3, VPC, ELB, AWS Lambda, Route53, Simple Queue Service, Relational Database Service, Simple Email Service.
+            EC2, S3, VPC, ELB, AWS Lambda, Route53, Simple Queue Service, Relational Database Service, Simple Email
+            Service.
         </p>
 
         <h3 class="my-profile__comlab">Experiencia Laboral</h3>
 
         <div class="my-profile box-blue">
             <div class="my-profile__left">
-                <h3 class="my-profile__explab">Software  Architect</h3>
+                <h3 class="my-profile__explab">Software Architect</h3>
                 <h4 class="my-profile__subexplab"><i>Aval Digital Labs </i></h4>
             </div>
             <div class="my-profile__right">
@@ -211,7 +240,7 @@
 
         <div class="my-profile box-blue">
             <div class="my-profile__left">
-                <h3 class="my-profile__explab">Senior Software  Developer</h3>
+                <h3 class="my-profile__explab">Senior Software Developer</h3>
                 <h4 class="my-profile__subexplab"><i>Bizagi</i></h4>
             </div>
             <div class="my-profile__right">
@@ -229,7 +258,7 @@
 
 
             Emprendimientos internos:<br>
-            Proyecto  de emprendimiento interno para mejorar la calidad de los
+            Proyecto de emprendimiento interno para mejorar la calidad de los
             productos basado en Behavior Driven Testing usando Gherkin, CucumberJS y Puppeteer.<br>
 
             Proyecto de emprendimiento para construir y compartir web components communes entre los equipos.
@@ -248,7 +277,7 @@
         </div>
         <p class="my-profile__comlab-inf">
             Desarrollo de sistema de Banca internet; Solución Transaccional Multicanal,
-            implementación e integración de módulos JEE  en arquitectura basada en Spring Framework,
+            implementación e integración de módulos JEE en arquitectura basada en Spring Framework,
             Hibernate y Oracle. <br>
             Desarrollo de interfaces web con JQuery.
         </p>
@@ -265,7 +294,7 @@
             </div>
         </div>
         <p class="my-profile__comlab-inf">
-            Diseño y desarrollo de múltiples aplicaciones web, usando  Java, JSF, JS.
+            Diseño y desarrollo de múltiples aplicaciones web, usando Java, JSF, JS.
             Despliegue de servicios web para interacción con sistemas externos.
         </p>
 
@@ -291,7 +320,18 @@
 
 </div>
 
-<h1 class="my-profile-footer">Aqui va el footer</h1>
+<div class="my-profile box-blue">
+
+    <div class="my-profile__left">
+    </div>
+
+    <div class="my-profile__right">
+        <footer class="my-profile-footer__links">
+            <a href="https://www.linkedin.com/in/rtaimal/" target="_blank">https://www.linkedin.com/in/rtaimal/</a>
+        </footer>
+        </d>
+
+    </div>
 
 </body>
 </html>

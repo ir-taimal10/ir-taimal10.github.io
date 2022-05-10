@@ -11,13 +11,13 @@ body {
 .my-profile__left {
     width: 38%;
     max-width: 466px;
-    background-color: red;
+    background-color: #ffffff;
 }
 
 .my-profile__right {
     width: 62%;
     max-width: 734px;
-    background-color: rgba(255, 0, 0, 0.66);
+    background-color: rgba(255, 255, 255, 0.66);
 }
 
 .my-profile__item {
@@ -27,40 +27,40 @@ body {
 
 }
 
-.my-profile__photo{
+.my-profile__photo {
     width: 190px;
     height: 200px;
 }
 
-.my-profile__main-tittle{
+.my-profile__main-tittle {
     text-align: center;
     font-family: 'Oswald', serif;
     font-size: 36px;
     margin: 0;
 }
 
-.my-profile__main-desc{
+.my-profile__main-desc {
     text-align: center;
     font-family: Roboto, serif;
     font-size: 15px;
     margin: 0;
 }
 
-.my-profile__desclong{
+.my-profile__desclong {
     text-align: justify;
     font-family: Roboto, serif;
     font-size: 18px;
     margin: 20px 16px 20px 16px;
 }
 
-.my-profile__comlab{
+.my-profile__comlab {
     text-align: justify;
     font-family: 'Oswald', serif;
     font-size: 22px;
     margin: 36px 16px 4px 16px;
 }
 
-.my-profile__comlab-inf{
+.my-profile__comlab-inf {
     text-align: justify;
     font-family: Roboto, serif;
     font-size: 18px;
@@ -69,12 +69,12 @@ body {
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
-    .my-profile{
+    .my-profile {
         display: flex;
         flex-direction: column;
     }
 
-    .my-profile__right{
+    .my-profile__right {
         width: 100%;
     }
 
@@ -83,45 +83,58 @@ body {
     }
 }
 
-.my-profile__publication{
+.my-profile__publication {
     text-align: justify;
     font-family: Roboto, serif;
     font-size: 18px;
     margin: 12px 16px 0px 16px;
 }
 
-.my-profile__publication-inf{
+.my-profile__publication-inf {
     font-family: Roboto, serif;
     font-size: 15px;
     margin: 0px 16px 16px 16px;
 }
 
-.my-profile__explab{
+.my-profile__explab {
     text-align: left;
     font-family: 'Oswald', serif;
     font-size: 18px;
     margin: 8px 16px 0px 16px;
 }
 
-.my-profile__subexplab{
+.my-profile__subexplab {
     text-align: left;
     font-family: Roboto, serif;
     font-size: 16px;
     margin: 0px 16px 8px 16px;
 }
 
-.my-profile__rightexplab{
+.my-profile__rightexplab {
     text-align: right;
     font-family: Roboto, serif;
     font-size: 16px;
     margin: 0px 16px 8px 16px;
 }
 
-.my-profile-footer{
-    text-align: right;
+.my-profile-footer {
+    display: flex;
+    justify-content: center;
     font-family: Roboto, serif;
-    margin: 0px 50px 16px 16px;
 }
+
+.my-profile-footer__links {
+    display: flex;
+    justify-content: right;
+    color: #ffffff;
+}
+
+.my-profile-icon {
+    fill: currentColor;
+    top: 5px;
+    position: relative;
+}
+
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
 }
